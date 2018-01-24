@@ -1,18 +1,18 @@
 /*
  Nota:
- Todas las instrucciones y parámetros se envían a la pantalla nextion en ascii
- y minúsculas y la instrucción finaliza con tres bytes "0xff 0xff 0xff"
+ Todas las instrucciones y parÃ¡metros se envÃ­an a la pantalla nextion en ascii
+ y minÃºsculas y la instrucciÃ³n finaliza con tres bytes "0xff 0xff 0xff"
  * 
- * * Author: Radioelf
+ * * Author: Radioelf http://radioelf.blogspot.com.es/
  
  */
 #ifndef NEXTION_H
 #define	NEXTION_H
 
-//#define ACK_on                                                                //configuramos el tipo de datos que devolverá nextion, solo cuando el último comand serie fue correcto
+//#define ACK_on                                                                //configuramos el tipo de datos que devolverÃ¡ nextion, solo cuando el Ãºltimo comand serie fue correcto
 
 #ifdef ACK_on
-    const unsigned char *ack = "bkcmd=1";                                       // es necesario tener habilitada interrupción por RX datos en UART antes de ini_nextion()
+    const unsigned char *ack = "bkcmd=1";                                       // es necesario tener habilitada interrupciÃ³n por RX datos en UART antes de ini_nextion()
 #else
     const unsigned char *ack = "bkcmd=0";
 #endif
