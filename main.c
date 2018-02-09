@@ -1,45 +1,45 @@
 /* Control de pantalla Nextion para mostrar datos recibidos por nodos CAN-bus
 
-nodo consumo 0x0A envÌa los siguientes datos:
-	1- tensiÛn de red
+nodo consumo 0x0A env√≠a los siguientes datos:
+	1- tensi√≥n de red
 	2- intensidad circuito luces
 	3- intensidad circuito aire acondicionado
 	4- intensidad circuito lavadora/termo
 	5- intensidad circuito enchufes
 	6- intensidad circuito cocina
 
-nodo temperatura/humedad 1 0x0C envÌa los siguientes datos:
-    1- temperatura en grados de la habitaciÛn de 0 a 50 grados
+nodo temperatura/humedad 1 0x0C env√≠a los siguientes datos:
+    1- temperatura en grados de la habitaci√≥n de 0 a 50 grados
     2- temperatura en grados del cuartillo de 0 a 50 grados
     3- temperatura en grados del pasillo de 0 a 50 grados
     4- temperatura en grados del aseo de 0 a 50 grados
-    5- humedad ambiental media de la habitaciÛn 20-95%
+    5- humedad ambiental media de la habitaci√≥n 20-95%
     6- humedad ambiental media del cuartillo 20-95%
     7- humedad ambiental media del pasillo 20-95%
     8- humedad ambiental media del aseo 20-95%
 
-nodo temperatura/humedad 2 0x0E envÌa los siguientes datos:
+nodo temperatura/humedad 2 0x0E env√≠a los siguientes datos:
     1- temperatura en grados del comedor de 0 a 50 grados
     2- temperatura en grados de la cocina de 0 a 50 grados
-    3- temperatura en grados de la habitaciÛn plancha de 0 a 50 grados
+    3- temperatura en grados de la habitaci√≥n plancha de 0 a 50 grados
     4- temperatura en grados del  taller de 0 a 50 grados
     5- humedad ambiental media del comedor  20-95%
     6- humedad ambiental media de la cocina  20-95%
-    7- humedad ambiental media de la habitaciÛn plancha  20-95%
+    7- humedad ambiental media de la habitaci√≥n plancha  20-95%
     8- humedad ambiental media del taller  20-95%
 
- Direcciones para nodo de estaciÛn meteorolÛgica:
- direcciÛn 0x2A opciones y 0x2B eco (NO usado)
- direcciÛn 0x2C->peticiÛn datos del  bloque 1, float1 bytes del 0 al 3
+ Direcciones para nodo de estaci√≥n meteorol√≥gica:
+ direcci√≥n 0x2A opciones y 0x2B eco (NO usado)
+ direcci√≥n 0x2C->petici√≥n datos del  bloque 1, float1 bytes del 0 al 3
                      temperatura 1 DHT22, float2 bytes de 4 al 7 temperatura interna BMP085
- direcciÛn 0x2D->peticiÛn datos del  bloque 2, anemÛmetro byte 0 y 1,
+ direcci√≥n 0x2D->petici√≥n datos del  bloque 2, anem√≥metro byte 0 y 1,
                      pulsos lluvia 1 minuto byte 2, pulsos lluvia 1 hora bytes 3 y 4,
-                     direcciÛn viento  bytes 5 y 6, tensiÛn VCC byte 7
- direcciÛn 0x2E->peticiÛn datos del  bloque 3, presiÛn bytes 0 y 3,
-                     radiaciÛn solar byte 4 y 5, radiaciÛn ultravioleta bytes 6,
+                     direcci√≥n viento  bytes 5 y 6, tensi√≥n VCC byte 7
+ direcci√≥n 0x2E->petici√≥n datos del  bloque 3, presi√≥n bytes 0 y 3,
+                     radiaci√≥n solar byte 4 y 5, radiaci√≥n ultravioleta bytes 6,
                      humedad  byte 7
  cada pulso de lluvia corresponde a 0.25mm
- el nodo de la estaciÛn meteorolÛgica enviÛ los float con el formato IEEE
+ el nodo de la estaci√≥n meteorol√≥gica envi√≥ los float con el formato IEEE
  para usar float con 32 bits es necesario modificar las opciones del compilador
  XC8 linker->memory model->32
 
@@ -50,7 +50,7 @@ nodo temperatura/humedad 2 0x0E envÌa los siguientes datos:
  * File:   main.c
  * Author: Radioelf
  * PIC18F2685
- * ˙ltima modificaciÛn el 19 del 1 del 2018, 8:00  v0.0.3
+ * √∫ltima modificaci√≥n el 9 del 2 del 2018, 16:00  v0.0.3
  *
  */
 
@@ -129,10 +129,10 @@ nodo temperatura/humedad 2 0x0E envÌa los siguientes datos:
 #include "library/ds1337.h"
 
 // portA
-#define Clock PORTAbits.RA0                                                     // Int, peticiÛn pantalla reloj (arduino D4)
-#define Nextion_ON PORTAbits.RA1                                                // Int, peticiÛn ON pantalla (arduino D5)
-#define Nextion_OFF PORTAbits.RA2                                               // Int, peticiÛn OFF pantalla (arduino D6)
-#define Temp_ON PORTAbits.RA3                                                   // Int, peticiÛn OFF alarma consumo (arduino D7)
+#define Clock PORTAbits.RA0                                                     // Int, petici√≥n pantalla reloj (arduino D4)
+#define Nextion_ON PORTAbits.RA1                                                // Int, petici√≥n ON pantalla (arduino D5)
+#define Nextion_OFF PORTAbits.RA2                                               // Int, petici√≥n OFF pantalla (arduino D6)
+#define Temp_ON PORTAbits.RA3                                                   // Int, petici√≥n OFF alarma consumo (arduino D7)
 // RA3                                                                          Out, no usado
 // RA4                                                                          Out, no usado, (colector abierto)
 // RA5                                                                          Out, no usado
@@ -143,7 +143,7 @@ nodo temperatura/humedad 2 0x0E envÌa los siguientes datos:
 #define Pulsador PORTBbits.RB1                                                  // Int, pulsador
 // RB2 -> Can_TX                                                                Out
 // RB3 -> Can RX                                                                Int
-#define Zumbador LATBbits.LATB4                                                 // out, indicaciÛn alarma
+#define Zumbador LATBbits.LATB4                                                 // out, indicaci√≥n alarma
 // RB5                                                                          Out, no usado
 // RB6 -> PGC                                                                   Out, program
 // RB7 -> PGD                                                                   Out, program
@@ -162,17 +162,17 @@ unsigned char actualiza =0, RxCanFlag =0, RX_uart =0, sleep =0, fecha_act =0,
 signed char gra_tem_ext [446] ={0}, max_temp_ext =0, min_temp_ext =0;           //+1=1...+127=127, 0, -1=255, -2=254....-127=129, -128=128
 unsigned char hora_max_int[6] ={0}, hora_min_int[6] ={0}, hora_max_ext[6] ={0},
               hora_min_ext[6] ={0};
-unsigned char gra_tem_int [446] ={0}, gra_potencia [446]={0}, gra_presion [446]={0};// 446 pixeles de la gr·fica, coordenadas x
+unsigned char gra_tem_int [446] ={0}, gra_potencia [446]={0}, gra_presion [446]={0};// 446 pixeles de la gr√°fica, coordenadas x
 unsigned char trama_ascii[10]={0};
 unsigned short posicion =0;                                                     // 0-65535
 //unsigned long                                                                 // 0-4294967295
 //float                                                                         // 4 bytes
 
-__EEPROM_DATA(0x14,0x05,0x76,0x16,0x00,0xff,0xff,0xff);                         // posiciÛn 1->siguiente p. ,2->sleep  , 3 y 4 alarma consumo (5750W)
+__EEPROM_DATA(0x14,0x05,0x76,0x16,0x00,0xff,0xff,0xff);                         // posici√≥n 1->siguiente p. ,2->sleep  , 3 y 4 alarma consumo (5750W)
 
 //*****************************ISR**********************************************
 void interrupt CAN_INTx_Timer0_uart_isr(void){                                  // CAN Rx, TMR0, UART
-    if ((PIE3bits.RXB0IE && PIR3bits.RXB0IF) || (PIE3bits.RXB1IE && PIR3bits.RXB1IF)){// CAN recepciÛn mode 0
+    if ((PIE3bits.RXB0IE && PIR3bits.RXB0IF) || (PIE3bits.RXB1IE && PIR3bits.RXB1IF)){// CAN recepci√≥n mode 0
         ECANCON=(ECANCON&0b00000)|(0b10000|(CANCON&0x0F));                      // banderas RX datos Can-Bus
         if (RXB0CONbits.RXFUL) RxCanFlag = 1;
         if (RXB1CONbits.RXFUL) RxCanFlag = 2;
@@ -181,11 +181,11 @@ void interrupt CAN_INTx_Timer0_uart_isr(void){                                  
         if (PIR3bits.RXB0IF) PIR3bits.RXB0IF = 0;                               // mode 0
         if (PIR3bits.RXBnIF) PIR3bits.RXBnIF = 0;                               // mode 1 ,2
     }
-    if (T0IE && T0IF){                                                          // banderas de interrupciÛn TMR0
+    if (T0IE && T0IF){                                                          // banderas de interrupci√≥n TMR0
         actualiza =1;
         T0IF=0;                                                                 // TMR0 borramos bandera
     }
-    if(PIE1bits.RCIE && PIR1bits.RCIF){                                         // comprobamos si tenemos una interrupciÛn por RX datos en UART
+    if(PIE1bits.RCIE && PIR1bits.RCIF){                                         // comprobamos si tenemos una interrupci√≥n por RX datos en UART
         if(OERR){                                                               // si tenemos error
             RX_uart =RCREG;
             RX_uart =RCREG;
@@ -206,7 +206,7 @@ void interrupt CAN_INTx_Timer0_uart_isr(void){                                  
        RCIF = 0;                                                                // borramos bandera rx
     }
 }
-//*****************************CONFIGURACI”N************************************
+//*****************************CONFIGURACI√ìN************************************
 void config(void){
 unsigned char espera =25;
      // Config. PORTs I/O
@@ -216,16 +216,16 @@ unsigned char espera =25;
     PORTB = 0x00;
     TRISC = 0b10011000;                                                         // 1->Input, 0->Output
     PORTC = 0x00;
-    ADCON0bits.ADON = 0;                                                        // OFF pines analÛgicos (config PBADEN = OFF))
+    ADCON0bits.ADON = 0;                                                        // OFF pines anal√≥gicos (config PBADEN = OFF))
     ADCON1 = 0b00001111;                                                        // RAx Int/Out and Vref- Vss, and Vref+ Vdd
     // Config ISR INT0 OFF
     RCONbits.IPEN = 0;                                                          // Disable priorities
     //INTCON = 0b10110000;
     INTCONbits.PEIE_GIEL = 1;                                                   // Enable peripheral interrupts
-    //INTCON2bits.INTEDG0 = 1;                                                  // InterrupciÛn INT0 se activa en flanco
-    INTCONbits.INT0IE = 0;                                                      // interrupciÛn INT0 deshabilitada
+    //INTCON2bits.INTEDG0 = 1;                                                  // Interrupci√≥n INT0 se activa en flanco
+    INTCONbits.INT0IE = 0;                                                      // interrupci√≥n INT0 deshabilitada
     INTCONbits.INT0IF = 0;                                                      // clear flah bit for INT0
-    INTCON3bits.INT1IE = 0;                                                     // interrupciÛn INT1 deshabilitada
+    INTCON3bits.INT1IE = 0;                                                     // interrupci√≥n INT1 deshabilitada
     //INTCON3bits.INT1IP = 0;                                                   // Low priority
     INTCON3bits.INT1IF = 0;                                                     // Clear external interrupt flag bit
     INTCON2bits.RBPU = 1;                                                       // pull-ups RBx OFF
@@ -299,17 +299,17 @@ unsigned char eeprom_rx_byte(unsigned short direccion){
     NOP();
     return EEDATA;
 }
-//******************Borramos buffer recepciÛn serie*****************************
+//******************Borramos buffer recepci√≥n serie*****************************
 void clear_buffer_uart(void){
     INTCONbits.PEIE = 0;
-    if (RX_off !=0) RX_off =0;                                                  // borramos indicaciÛn  0xff 0xff 0xff
+    if (RX_off !=0) RX_off =0;                                                  // borramos indicaci√≥n  0xff 0xff 0xff
     RX_buffer[0] =0;
     while (RX_con){
         RX_buffer[RX_con--] =0;                                                 // iniciamos y limpiamos array trama RX
     }
     INTCONbits.PEIE = 1;
 }
-//***********Actualizamos hora, para mÌximo y m·nima temperatura****************
+//***********Actualizamos hora, para m√≠ximo y m√°nima temperatura****************
 void act_hora_max_min(max_min, int_ext){
 unsigned char max_min_hora[4] ={0};
     DS1337_leer_hora_fecha(&dt);                                                // actualizamos hora
@@ -317,7 +317,7 @@ unsigned char max_min_hora[4] ={0};
     max_min_hora[1] =(dt.horas%10)+0x30;
     max_min_hora[2] =(dt.minutos/10)+0x30;
     max_min_hora[3] =(dt.minutos%10)+0x30;
-    if (max_min){                                                               // comprobamos si es temperatura mÌxima o m·nima
+    if (max_min){                                                               // comprobamos si es temperatura m√≠xima o m√°nima
         if (int_ext){                                                           // comprobamos si es temperatura interna o externa
             hora_max_int[0] =max_min_hora[0];                                   // creamos trama hora para nextion
             hora_max_int[1] =max_min_hora[1];
@@ -325,7 +325,7 @@ unsigned char max_min_hora[4] ={0};
             hora_max_int[3] =max_min_hora[2];
             hora_max_int[4] =max_min_hora[3];
             hora_max_int[5] =1;
-        }else{                                                                  // temperatura externa m·ximo
+        }else{                                                                  // temperatura externa m√°ximo
             hora_max_ext[0] =max_min_hora[0];
             hora_max_ext[1] =max_min_hora[1];
             hora_max_ext[2] =':';
@@ -333,7 +333,7 @@ unsigned char max_min_hora[4] ={0};
             hora_max_ext[4] =max_min_hora[3];
             hora_max_ext[5] =1;
         }
-    }else{                                                                      // mÌnimo temperatura interna/externa
+    }else{                                                                      // m√≠nimo temperatura interna/externa
         if (int_ext){
             hora_min_int[0] =max_min_hora[0];
             hora_min_int[1] =max_min_hora[1];
@@ -351,7 +351,7 @@ unsigned char max_min_hora[4] ={0};
         }
     }
 }
-//***********Actualizamos hora, fecha y dÌa de la semana************************
+//***********Actualizamos hora, fecha y d√≠a de la semana************************
 void act_reloj(unsigned char actualizar){
 unsigned char trama_rtc[10] ={0};
     DS1337_leer_hora_fecha(&dt);                                                // actualizamos hora y fecha
@@ -362,7 +362,7 @@ unsigned char trama_rtc[10] ={0};
     trama_rtc[4] =(dt.minutos%10)+0x30;
     trama_rtc[5] =0;
     txt_nextion((char*)"t0", (char*)trama_rtc);                                 // enviamos hora y minutos
-    if (dt.dia_mes != fecha_act || actualizar ==1){                             // si tenemos un nuevo dÌa del mes o peticiÛn de actualizar
+    if (dt.dia_mes != fecha_act || actualizar ==1){                             // si tenemos un nuevo d√≠a del mes o petici√≥n de actualizar
         trama_rtc[0] =(dt.dia_mes/10)+0x30;                                     // creamos trama_rtc para nextion
         trama_rtc[1] =(dt.dia_mes%10)+0x30;
         trama_rtc[2] ='/';
@@ -371,7 +371,7 @@ unsigned char trama_rtc[10] ={0};
         trama_rtc[5] ='/';
         trama_rtc[6] =(dt.anyo/10)+0x30;
         trama_rtc[7] =(dt.anyo%10)+0x30;
-        txt_nextion((char*)"t1", (char*)trama_rtc);                             // enviamos dÌa del mes, mes y anyo
+        txt_nextion((char*)"t1", (char*)trama_rtc);                             // enviamos d√≠a del mes, mes y anyo
         switch (dt.dia){
             case 1:
                 trama_rtc[0] ='l'; trama_rtc[1] ='u'; trama_rtc[2] ='n';
@@ -409,7 +409,7 @@ unsigned char trama_rtc[10] ={0};
                 trama_rtc[6] ='o'; trama_rtc[7] =0;
             break;
         }
-        txt_nextion((char*)"t2", (char*)trama_rtc);                             // enviamos dÌa de la semana
+        txt_nextion((char*)"t2", (char*)trama_rtc);                             // enviamos d√≠a de la semana
     }
 }
 //**********Convertimos 4 bytes a float y el float a string*********************
@@ -427,7 +427,7 @@ union {
     buf = ftoa(u.f, &status);
     p =buf;
     while (*p!=0){
-        ch=*p;                                                                  // accedemos al siguiente car·cter
+        ch=*p;                                                                  // accedemos al siguiente car√°cter
         if (y <9){                                                              // comprobamos si tenemos 2 decimales
             trama_ascii[x] = *p;
             y++;
@@ -443,9 +443,9 @@ union {
     }
     return (signed short)u.f;                                                   // retornamos el valor entero
 }
-//***Tendencia baromÛtrica/temperatura se actualiza cada 60 minutos*************
-// se indica un incremento si la presiÛn aumenta 2 mb (margen)
-// se indica un descenso  si la presiÛn decrece  2 mb (margen)
+//***Tendencia barom√≥trica/temperatura se actualiza cada 60 minutos*************
+// se indica un incremento si la presi√≥n aumenta 2 mb (margen)
+// se indica un descenso  si la presi√≥n decrece  2 mb (margen)
 // se indica un incremento si la temperatura aumenta 5 grados (margen)
 // se indica un descenso  si la temperatura decrece 5 grados (margen)
 unsigned char tendencia(unsigned char a, unsigned char b, unsigned char margen){
@@ -462,8 +462,8 @@ unsigned char tendencia(unsigned char a, unsigned char b, unsigned char margen){
     }
     return 1;                                                                   // iguales->estable
 }
-/*Obtenemos la previsiÛn meteorolÛgica seg˙n presiÛn y temperatura (poco fiable!!)
-BAR”METRO       TERM”METRO           PREDICCI”N
+/*Obtenemos la previsi√≥n meteorol√≥gica seg√∫n presi√≥n y temperatura (poco fiable!!)
+BAR√ìMETRO       TERM√ìMETRO           PREDICCI√ìN
 Bajando          bajando               tormentas
 Bajando          estable               lluvias probables
 Bajando          subiendo              nubes y claros
@@ -484,11 +484,11 @@ signed char  media_tem_ant, media_tem_act;
     media_tem_act =(signed char) (gra_tem_ext[posicion-4] +gra_tem_ext[posicion-3] +
     gra_tem_ext[posicion-2]+ gra_tem_ext[posicion-1] +gra_tem_ext[posicion])/5; // media temperatura actual
 
-    media_pre_ant =(unsigned char) (gra_presion[posicion-19] +gra_presion[posicion-18] +// media presiÛn anterior
+    media_pre_ant =(unsigned char) (gra_presion[posicion-19] +gra_presion[posicion-18] +// media presi√≥n anterior
     gra_presion[posicion-17]+ gra_presion[posicion-16] +gra_presion[posicion-15])/5;
 
     media_pre_act =(unsigned char) (gra_presion[posicion-4]+gra_presion[posicion-3]+gra_presion[posicion-2]+
-    gra_presion[posicion-1]+gra_presion[posicion])/5;                           // media presiÛn actual
+    gra_presion[posicion-1]+gra_presion[posicion])/5;                           // media presi√≥n actual
 
     if (media_tem_act <0)                                                       // comprobamos si la temperatura es negativa
         media_tem_act =256-(unsigned char) media_tem_act;                       // obtenemos los grados negativos en valor positivo
@@ -498,23 +498,23 @@ signed char  media_tem_ant, media_tem_act;
     pres =tendencia (media_pre_ant, media_pre_act, 2);
 
     if (pres ==3){
-        if (temp ==3) return 16;                                                // bajando presiÛn y temperatura->tormenta
-        if (temp ==1) return 15;                                                // bajando presiÛn y estable temperatura->lluvias probables
-        return 17;                                                              // bajando presiÛn y bajando temperatura->nubes y claros
+        if (temp ==3) return 16;                                                // bajando presi√≥n y temperatura->tormenta
+        if (temp ==1) return 15;                                                // bajando presi√≥n y estable temperatura->lluvias probables
+        return 17;                                                              // bajando presi√≥n y bajando temperatura->nubes y claros
     }
     if (pres ==2){
-        if (temp ==2) return 18;                                                // subiendo presiÛn y bajando temperatura->viento
-        return 14;                                                              // subiendo presiÛn y temperatura->soleado
-                                                                                // subiendo presiÛn y estable temperatura->soleado
+        if (temp ==2) return 18;                                                // subiendo presi√≥n y bajando temperatura->viento
+        return 14;                                                              // subiendo presi√≥n y temperatura->soleado
+                                                                                // subiendo presi√≥n y estable temperatura->soleado
     }
     if (pres ==1){
-        if (temp ==1) return 17;                                                // estable presiÛn y temperatura->nubes y claros
-        if (temp ==2) return 15;                                                // estable presiÛn y bajando temperatura->lluvias probables
-        return 14;                                                              // estable presiÛn y subiendo temperatura->soleado
+        if (temp ==1) return 17;                                                // estable presi√≥n y temperatura->nubes y claros
+        if (temp ==2) return 15;                                                // estable presi√≥n y bajando temperatura->lluvias probables
+        return 14;                                                              // estable presi√≥n y subiendo temperatura->soleado
     }
     return 14;                                                                  // soleado
 }
-// GestiÛn de la gr·fica de la temperatura externa/interna, gr·fica de 446*200
+// Gesti√≥n de la gr√°fica de la temperatura externa/interna, gr√°fica de 446*200
 // (446*3=1338minutos->22,3 horas), 1dia =1440 minutos, 480 ciclos
 void grafica_temp(signed char dato, unsigned char ext_int){
 unsigned char  temp_int;
@@ -522,82 +522,82 @@ unsigned short x;
     if (ciclo_max_min >1){                                                      // inicia con ciclo_max_min a 2
         if (ext_int){
             if (dato > max_temp_ext){
-                act_hora_max_min(1, 0);                                         // actualizamos la hora de m·ximo valor
-                max_temp_ext =dato;                                             // obtenemos el m·ximo valor temperatura externa
+                act_hora_max_min(1, 0);                                         // actualizamos la hora de m√°ximo valor
+                max_temp_ext =dato;                                             // obtenemos el m√°ximo valor temperatura externa
             }else{
                 if (dato < min_temp_ext){
-                    act_hora_max_min(0, 0);                                     // actualizamos la hora de mÌnimo valor
-                    min_temp_ext =dato;                                         // obtenemos el mÌnimo valor temperatura externa
+                    act_hora_max_min(0, 0);                                     // actualizamos la hora de m√≠nimo valor
+                    min_temp_ext =dato;                                         // obtenemos el m√≠nimo valor temperatura externa
                 }
             }
         }else{
             temp_int =(unsigned char) dato;
             if (temp_int > max_temp_int){
-                act_hora_max_min(1, 1);                                         // actualizamos la hora de m·ximo valor
-                max_temp_int =temp_int;                                         // obtenemos el m·ximo valor temperatura interna
+                act_hora_max_min(1, 1);                                         // actualizamos la hora de m√°ximo valor
+                max_temp_int =temp_int;                                         // obtenemos el m√°ximo valor temperatura interna
             }else{
                 if (temp_int < min_temp_int){
-                    act_hora_max_min(0, 1);                                     // actualizamos la hora de mÌnimo valor
-                    min_temp_int =temp_int;                                     // obtenemos el mÌnimo valor temperatura interna
+                    act_hora_max_min(0, 1);                                     // actualizamos la hora de m√≠nimo valor
+                    min_temp_int =temp_int;                                     // obtenemos el m√≠nimo valor temperatura interna
                 }
             }
         }
     }
     if (posicion !=445){                                                        // comprobamos si tenemos el array completo
         if (ext_int){
-            gra_tem_ext[posicion]=dato;                                         // introducciÛn los datos en el array temperatura externa
+            gra_tem_ext[posicion]=dato;                                         // introducci√≥n los datos en el array temperatura externa
         }else{
-            gra_tem_int[posicion]=temp_int;                                     // introducciÛn los datos en el array temperatura interna
+            gra_tem_int[posicion]=temp_int;                                     // introducci√≥n los datos en el array temperatura interna
         }
     }else{
         for(x =0; x <445; x++){
             if (ext_int){
-                gra_tem_ext[x] =gra_tem_ext[x+1];	                            // rotamos gr·fica de derecha a izquierda temperatura externa
+                gra_tem_ext[x] =gra_tem_ext[x+1];	                            // rotamos gr√°fica de derecha a izquierda temperatura externa
             }else{
-                gra_tem_int[x] =gra_tem_int[x+1];	                            // rotamos gr·fica de derecha a izquierda temperatura interna
+                gra_tem_int[x] =gra_tem_int[x+1];	                            // rotamos gr√°fica de derecha a izquierda temperatura interna
             }
         }
         if (ext_int){
-            gra_tem_ext[445] =dato;                                             // el ultimo valor leÌdo lo colocamos en el ultima posiciÛn de la array
+            gra_tem_ext[445] =dato;                                             // el ultimo valor le√≠do lo colocamos en el ultima posici√≥n de la array
         }else{
             gra_tem_int[445] =temp_int;
         }
     }
 }
-// GestiÛn de la gr·fica del la presiÛn, gr·fica de 446*200
+// Gesti√≥n de la gr√°fica del la presi√≥n, gr√°fica de 446*200
 // 1dia =1440 minutos (446*3=1338minutos)
 void grafica_presion(unsigned short dato){
 unsigned char y;
 unsigned short x;
     if (dato >875 && dato <1076)
-        y =(unsigned char) dato -875;                                           // restamos mÌnima 875 (presiÛn de 0 a 200 presiÛn m·xima = 1075mb)
+        y =(unsigned char) dato -875;                                           // restamos m√≠nima 875 (presi√≥n de 0 a 200 presi√≥n m√°xima = 1075mb)
     else
         if (dato <875) y =1; else y =200;                                       // valores fuera de rango
     if (posicion ==445){                                                        // comprobamos si tenemos el array completo
         for(x =0; x <445; x++){
-            gra_presion[x] =gra_presion[x+1];	                                // rotamos gr·fica de derecha a izquierda
+            gra_presion[x] =gra_presion[x+1];	                                // rotamos gr√°fica de derecha a izquierda
         }
     }
     gra_presion[posicion] =y;
 }
-// GestiÛn de la gr·fica del la potencia, gr·fica de 446*200
+// Gesti√≥n de la gr√°fica del la potencia, gr√°fica de 446*200
 // 1dia =1440 minutos, (446*3=1338 minutos, 22,3horas)
 void grafica_consumo(unsigned short dato){
 unsigned char y;
 unsigned short x;
     if (dato >28 && dato <5801)
-        y = dato /29;                                                           // dividir por 2 (potencia m·xima = 200*29=5800W
+        y = dato /29;                                                           // dividir por 2 (potencia m√°xima = 200*29=5800W
     else{
-        if (dato <28) y =1; else y =200;                                        // potencia inferior a 29 =1 o mayor a 5800 =posiciÛn 200 en gr·fica
+        if (dato <28) y =1; else y =200;                                        // potencia inferior a 29 =1 o mayor a 5800 =posici√≥n 200 en gr√°fica
     }
     if (posicion ==445){                                                        // comprobamos si tenemos el array completo
         for(x =0; x <445; x++){
-            gra_potencia[x] =gra_potencia[x+1];	                                // rotamos gr·fica de derecha a izquierda
+            gra_potencia[x] =gra_potencia[x+1];	                                // rotamos gr√°fica de derecha a izquierda
         }
     }
-    gra_potencia[posicion] =(unsigned char)y;                                   // introducciÛn los datos en el array
+    gra_potencia[posicion] =(unsigned char)y;                                   // introducci√≥n los datos en el array
 }
-//*******Enviamos los datos almacenados a la gr·fica correspondiente************
+//*******Enviamos los datos almacenados a la gr√°fica correspondiente************
 unsigned char tx_grafica (unsigned char id, unsigned char canal, unsigned char grafica){
 unsigned char trama_gar[13] ={'a','d','d','t',' ',' ',',',' ',',',' ',' ',' ',0}, espera =0;
 unsigned char longitud[5] = {0}, TX_dato;
@@ -612,7 +612,7 @@ unsigned short x;
     else
         trama_gar[11] =0;
     clear_buffer_uart();
-    cmd_nextion((char*)trama_gar);                                              // peticiÛn enviÛ de datos (add id,canal,longitud)
+    cmd_nextion((char*)trama_gar);                                              // petici√≥n envi√≥ de datos (add id,canal,longitud)
     do{                                                                         // ~5ms para pasar a modo RX transparente
         if (RX_off ==3){
             RX_off =0;
@@ -625,40 +625,40 @@ unsigned short x;
             espera++;
             __delay_ms(1);
         }
-    }while (espera <250);                                                       // esperamos confirmaciÛn de nextion (0xfe 0xff 0xff 0xff)
+    }while (espera <250);                                                       // esperamos confirmaci√≥n de nextion (0xfe 0xff 0xff 0xff)
     if (espera ==250) return 1;
     espera =0;
     clear_buffer_uart();
     for(x =0; x <posicion; x++){                                                // enviar los datos
         switch (grafica){
-            case 0:                                                             // gr·fica temperatura externa
+            case 0:                                                             // gr√°fica temperatura externa
                 if (gra_tem_ext[x] <0){                                         // comprobamos si la temperatura es negativa
                     TX_dato =256-(unsigned char) gra_tem_ext[x];                // obtenemos los grados negativos en valor positivo
-                    TX_dato =100-(TX_dato*2);                                   // doblamos para mostrar en gr·fica de 0 a 100
+                    TX_dato =100-(TX_dato*2);                                   // doblamos para mostrar en gr√°fica de 0 a 100
                                                                                 // ajustamos de 99 a 0
                 }else{
                     TX_dato =(unsigned char) gra_tem_ext[x];
                     if (TX_dato >0)                                             // si la temperatura es mayor de 0 grados
-                        TX_dato = TX_dato*2;                                    // la doblamos para mostrar entre 100 y 200 (50 grados m·ximo)
-                    TX_dato =TX_dato+100;                                       // 0 grados corresponde a la posiciÛn 100 (centro de la gr·fica)
+                        TX_dato = TX_dato*2;                                    // la doblamos para mostrar entre 100 y 200 (50 grados m√°ximo)
+                    TX_dato =TX_dato+100;                                       // 0 grados corresponde a la posici√≥n 100 (centro de la gr√°fica)
                 }
 
             break;
-            case 1:                                                             // gr·fica temperatura interna, 0 a 50 grados
-                if (gra_tem_int[x] >0)                                          // la doblamos para mostrar entre 100 y 200 (50 grados m·ximo)
+            case 1:                                                             // gr√°fica temperatura interna, 0 a 50 grados
+                if (gra_tem_int[x] >0)                                          // la doblamos para mostrar entre 100 y 200 (50 grados m√°ximo)
                     TX_dato =gra_tem_int[x]*2;
-                TX_dato =TX_dato+100;                                           // 0 grados corresponde a la posiciÛn 100 (centro de la gr·fica)
+                TX_dato =TX_dato+100;                                           // 0 grados corresponde a la posici√≥n 100 (centro de la gr√°fica)
             break;
-            case 2:                                                             // gr·fica presiÛn
+            case 2:                                                             // gr√°fica presi√≥n
                 TX_dato =gra_presion[x];
             break;
-            case 3:                                                             // gr·fica consumo
+            case 3:                                                             // gr√°fica consumo
                 TX_dato =gra_potencia[x];
             break;
         }
         putch(TX_dato);
     }
-    do{                                                                         // esperamos confirmaciÛn de datos recibidos (0xfd 0xff 0xff 0xff)
+    do{                                                                         // esperamos confirmaci√≥n de datos recibidos (0xfd 0xff 0xff 0xff)
         if (RX_off ==3){
             RX_off =0;
             if (RX_buffer[0] == 0xfd){
@@ -696,10 +696,10 @@ unsigned char espera_rtc =240, segundo =100;                                    
             num_nextion((char*)"n0", dt.horas, 0);                              // n0.val=hora
             num_nextion((char*)"n1", dt.minutos, 0);                            // n1.val=minuto
             num_nextion((char*)"n2", dt.segundos, 0);                           // n2.val=segundo
-            num_nextion((char*)"n3", dt.dia_mes, 0);                            // n3.val=dÌa del mes
+            num_nextion((char*)"n3", dt.dia_mes, 0);                            // n3.val=d√≠a del mes
             num_nextion((char*)"n4", dt.mes, 0);                                // n4.val=mes
             num_nextion((char*)"n5", dt.anyo, 0);                               // n5.val=anyo
-            num_nextion((char*)"va0", dt.dia, 0);                               // va0.val=dÌa de la semana
+            num_nextion((char*)"va0", dt.dia, 0);                               // va0.val=d√≠a de la semana
             segundo =dt.segundos;
         }
         __delay_ms(250);
@@ -723,7 +723,7 @@ unsigned char espera_temp =30, run =0;
     cmd_nextion((char*)"sleep=1");                                              // en reposo
 
 }
-//********************IndicaciÛn OK a traves de zumbador************************
+//********************Indicaci√≥n OK a traves de zumbador************************
 void OK_sound(void){
     Zumbador =1;
     __delay_ms(50);
@@ -754,10 +754,10 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
     ClrWdt();
     siguiente_p =eeprom_rx_byte (0);                                            // obtenemos los segundos de siguiente pantalla
     reposo =eeprom_rx_byte (1);                                                 // obtenemos los minutos para pasar a reposo
-    alarma_pot =((eeprom_rx_byte (3)) << 8) | eeprom_rx_byte (2);               // obtenemos el valor para la alarma de potencia m·xima
+    alarma_pot =((eeprom_rx_byte (3)) << 8) | eeprom_rx_byte (2);               // obtenemos el valor para la alarma de potencia m√°xima
     reposo_m =update_reposo(reposo);
     act_reloj(ciclo_ini);                                                       // actualizamos la hora y el calendario
-    INTCONbits.PEIE = 1;                                                        // activamos interrupciÛn de perifÈricos
+    INTCONbits.PEIE = 1;                                                        // activamos interrupci√≥n de perif√©ricos
     INTCONbits.GIE =1;
     while (1){
         if (actualiza){
@@ -767,25 +767,25 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
             actualiza =0;
             if (sleep ==0) Led_status = !Led_status;
             cont_segundos++;
-            // gestiÛn siguiente pagina
+            // gesti√≥n siguiente pagina
             if (cont_segundos ==siguiente_p){
                 cont_segundos =0;
                 if (sleep ==0){                                                 // siguiente pagina, paginas de 0 a la 9
-                    auto_page =1;                                               // indicamos cambio de pagina autom·tico
+                    auto_page =1;                                               // indicamos cambio de pagina autom√°tico
                     cmd_nextion((char*)page);
                 }
             }
-            // gestiÛn datos gr·ficas y previsiÛn
-            if ((minuto %3) ==0 && act_minuto !=minuto){                        // cada m˙ltiplo de 3 minutos actualizamos
+            // gesti√≥n datos gr√°ficas y previsi√≥n
+            if ((minuto %3) ==0 && act_minuto !=minuto){                        // cada m√∫ltiplo de 3 minutos actualizamos
                 if (ciclo_minuto ==2){                                          // despreciamos los 6 primeros minutos
                     grafica_temp (tem_media_graf, 1);                           // temperatura externa
                     acumulador_temp =0;
                     ciclo_media_temp =0;
                     grafica_temp (tem_media, 0);                                // temperatura interna media
-                    grafica_presion (pres_ext);                                 // presiÛn atmosfÈrica
-                    grafica_consumo (max_potencia);                             // consumo elÈctrico
+                    grafica_presion (pres_ext);                                 // presi√≥n atmosf√©rica
+                    grafica_consumo (max_potencia);                             // consumo el√©ctrico
                     max_potencia =29;
-                    if (posicion !=445) posicion++;                             // incrementamos posiciÛn
+                    if (posicion !=445) posicion++;                             // incrementamos posici√≥n
                 }else
                     ciclo_minuto++;
                 if (espera_prevision ==20){
@@ -795,15 +795,15 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                     espera_prevision++;
                 act_minuto =minuto;
             }
-            // gestiÛn reposo
+            // gesti√≥n reposo
             if (minuto ==reposo_m && sleep ==0 && alar_on_off ==22){
                 pulsador_on =0;
                 Led_status =0;
                 cmd_nextion((char*)"sleep=1");                                  // en reposo
                 sleep =1;
             }
-            // gestiÛn nuevo dÌa
-            if (fecha_act !=dt.dia_mes){                                        // si cambio el dÌa actualizamos
+            // gesti√≥n nuevo d√≠a
+            if (fecha_act !=dt.dia_mes){                                        // si cambio el d√≠a actualizamos
                 if (sleep ==1){
                     cmd_nextion((char*)"sleep=0");                              // ON nextion
                     sleep =0;
@@ -821,7 +821,7 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
             //----------------------TX DATOS CAN-Bus----------------------------
             switch (segundo){
                 case 5: case 27: case 47:
-                    RX_can =0x0A;                                               // peticiÛn datos nodo consumo, cada segundo 5 , 27 y 47
+                    RX_can =0x0A;                                               // petici√≥n datos nodo consumo, cada segundo 5 , 27 y 47
                 break;
                 case 10: case 37:
                     RX_can =0x0C;                                               // nodo temperatura/humedad 1, cada segundo 10 y 37
@@ -843,9 +843,9 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
         }
         //---------------------------RX DATOS CAN-Bus---------------------------
         if (RxCanFlag){                                                         // comprobamos si tenemos datos del CAN-bus
-            RxCanFlag =0;                                                       // borramos indicaciÛn datos CAN-bus
+            RxCanFlag =0;                                                       // borramos indicaci√≥n datos CAN-bus
             if (Receive_CANbus()){
-                switch (RX_can){                                                // comprobamos a que nodo se le realizo la peticiÛn de datos
+                switch (RX_can){                                                // comprobamos a que nodo se le realizo la petici√≥n de datos
                     case 0x0A:                                                  // nodo consumo
                         tension =(unsigned char)(temp_D0 *1.52);                // pasamos a voltios
                         int_luces =(unsigned char)(temp_D1 /11.73);             // pasamos a amperios 0-20A,
@@ -883,7 +883,7 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                             temp_int_ok = tem_comedor +tem_cocina +tem_plancha + tem_taller +temp_int_ok;
                         if (temp_int_ok >8){
                             tem_media_act =temp_int_ok/8;
-                            if (tem_media_act >5){                              // 5 grados como mÌnima temperatura media interna
+                            if (tem_media_act >5){                              // 5 grados como m√≠nima temperatura media interna
                                 if (tem_media_act >tem_media-5 && tem_media_act <tem_media+5)
                                     tem_media =tem_media_act;
                             }
@@ -891,25 +891,26 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                         if (tem_media ==0) tem_media =tem_comedor;
                         temp_int_ok =0;
                     break;
-                    case 0x2C:                                                  // nodo estaciÛn meteorolÛgica 1
+                    case 0x2C:                                                  // nodo estaci√≥n meteorol√≥gica 1
                         temperatura[0] =temp_D0;                                // temperatura externa (4 bytes)
                         temperatura[1] =temp_D1;
                         temperatura[2] =temp_D2;
                         temperatura[3] =temp_D3;
-                        tem_bmp085[0] =temp_D4;                                 // temperatura sensor baromÛtrico bmp085 (4 bytes)
+                        tem_bmp085[0] =temp_D4;                                 // temperatura sensor barom√≥trico bmp085 (4 bytes)
                         tem_bmp085[1] =temp_D5;
                         tem_bmp085[2] =temp_D6;
                         tem_bmp085[3] =temp_D7;
                         tem_ext =byte_float_string(temperatura[0], temperatura[1], temperatura[2], temperatura[2]);
+			if (tem_ext <0) tem_ext =tem_ext+3275;                  // si es negativa realizamos la correcci√≥n
                         acumulador_temp = acumulador_temp +tem_ext;
                         ciclo_media_temp ++;
                         tem_media_graf =(signed char)(acumulador_temp/ciclo_media_temp);
 
                     break;
-                    case 0x2D:                                                  // nodo estaciÛn meteorolÛgica 2
+                    case 0x2D:                                                  // nodo estaci√≥n meteorol√≥gica 2
                         viento = ((temp_D1 << 8) | temp_D0);                    // velocidad del viento (2 bytes)
-                        direcc_viento =((temp_D6 << 8) | temp_D5);              // direcciÛn de viento (2 bytes)
-                        vcc =temp_D7;                                           // tensiÛn microprocesador
+                        direcc_viento =((temp_D6 << 8) | temp_D5);              // direcci√≥n de viento (2 bytes)
+                        vcc =temp_D7;                                           // tensi√≥n microprocesador
                         if (temp_D2) lluvia_m =temp_D2;                         // pulsos lluvia 1 minuto
                         if (update_lluvia_m){
                             lluvia_m =0;
@@ -917,23 +918,23 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                         }
                         lluvia_h =((temp_D4 << 8) | temp_D3);                   // pulsos lluvia 1 hora (2 bytes)
                         if (lluvia_h) acum_lluvia_h =acum_lluvia_h +lluvia_h;
-                        if (update_lluvia_h){                                   // se enviÛ a nextion
+                        if (update_lluvia_h){                                   // se envi√≥ a nextion
                             if (acum_lluvia_h ==65535){
                                 acum_lluvia_h =0;
                                 nuevo_dia =0;
                             }
                             update_lluvia_h =0;
                         }
-                        if (nuevo_dia ==1) acum_lluvia_h =65535;                // indicamos fin acumulaciÛn lluvia dÌa
+                        if (nuevo_dia ==1) acum_lluvia_h =65535;                // indicamos fin acumulaci√≥n lluvia d√≠a
                     break;
-                    case 0x2E:                                                  // nodo estaciÛn meteorolÛgica 3
-                        presion[0] =temp_D0;                                    // presiÛn atmosfÛrica (4 bytes)
+                    case 0x2E:                                                  // nodo estaci√≥n meteorol√≥gica 3
+                        presion[0] =temp_D0;                                    // presi√≥n atmosf√≥rica (4 bytes)
                         presion[1] =temp_D1;
                         presion[2] =temp_D2;
                         presion[3] =temp_D3;
                         pres_ext =(unsigned short) byte_float_string(presion[0], presion[1], presion[2], presion[3]);
-                        rad_solar =((temp_D5 << 8) | temp_D4);                  // radiaciÛn solar (2 bytes)
-                        rad_UV =temp_D6;                                        // radiaciÛn ultravioleta (de 0 a 11)
+                        rad_solar =((temp_D5 << 8) | temp_D4);                  // radiaci√≥n solar (2 bytes)
+                        rad_UV =temp_D6;                                        // radiaci√≥n ultravioleta (de 0 a 11)
                         humedad =temp_D7;                                       // humedad externa
                     break;
                     case 0x20:                                                  // nodo int-out
@@ -957,13 +958,13 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
         if (RX_off ==3){                                                        // comprobamos si tenemos una trama completa
             RX_off =0;                                                          // iniciamos RX fin trama->0xff 0xff 0xff
             switch (RX_buffer[0]){
-                case 0x66:                                                      // trama de indicaciÛn nueva pagina
-                    if (!auto_page) cont_segundos =0;                           // comprobamos si pasamos a la pagina autom·ticamente
+                case 0x66:                                                      // trama de indicaci√≥n nueva pagina
+                    if (!auto_page) cont_segundos =0;                           // comprobamos si pasamos a la pagina autom√°ticamente
                     auto_page =0;
                     act_reloj(ciclo_ini);                                       // actualizamos la hora y el calendario
                     switch (RX_buffer[1]){
                         case 0x00:                                              // pagina principal
-                            num_nextion((char*)"n0", tension, 0);               // n0.val=tensiÛn
+                            num_nextion((char*)"n0", tension, 0);               // n0.val=tensi√≥n
                             num_nextion((char*)"n1", int_total, 0);             // n1.val=intensidad total
                             num_nextion((char*)"n2", potencia, 0);              // n2.val=potencia en W
                             byte_float_string(temperatura[0], temperatura[1], temperatura[2], temperatura[2]);
@@ -973,44 +974,45 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                             num_nextion((char*)"va0", acum_lluvia_h, 0);        // va0.val= pulsos de lluvia acumulados en una hora
                             update_lluvia_h =1;                                 // indicamos enviado pulsos lluvia hora
                             if (prevision){
-                                num_nextion((char*)"r0", 0, 0);                 // r0.val=estado previsiÛn, 0 OK
+                                num_nextion((char*)"r0", 0, 0);                 // r0.val=estado previsi√≥n, 0 OK
                                 num_nextion((char*)"p0", prevision, 1);         // p0.pic=imagen de 14 a 18
                             }
                             page[5] ='1';                                       // indicamos siguiente pagina
                         break;
                         case 0x01:                                              // pagina meteo1
-                            num_nextion((char*)"va0", direcc_viento, 0);        // va0.val=direcciÛn viento-> Z0
+                            num_nextion((char*)"va0", direcc_viento, 0);        // va0.val=direcci√≥n viento-> Z0
                             num_nextion((char*)"n1", viento, 0);                // n1.val=velocidad viento
                             num_nextion((char*)"n2", humedad, 0);               // n2.val=humedad
                             pres_ext =(unsigned short) byte_float_string(presion[0], presion[1], presion[2], presion[3]);
-                            txt_nextion((char*)"t3", (char*)trama_ascii);       // t3.txt=presiÛn baromÛtrica
-                            num_nextion((char*)"va1", pres_ext, 0);             // va1.val=presiÛn-> Z1
-                            num_nextion((char*)"va3", lluvia_m, 0);             // va3.val=pulsos de lluvia ˙ltimo minuto
+                            txt_nextion((char*)"t3", (char*)trama_ascii);       // t3.txt=presi√≥n barom√≥trica
+                            num_nextion((char*)"va1", pres_ext, 0);             // va1.val=presi√≥n-> Z1
+                            num_nextion((char*)"va3", lluvia_m, 0);             // va3.val=pulsos de lluvia √∫ltimo minuto
                             update_lluvia_m =1;                                 // indicamos enviado pulsos lluvia minuto
                             page[5] ='2';                                       // indicamos siguiente pagina
                         break;
                         case 0x02:                                              // pagina meteo2
                             tem_ext =byte_float_string(temperatura[0], temperatura[1], temperatura[2], temperatura[3]);
+			    if (tem_ext <0) tem_ext =tem_ext+3275;              // si es negativa realizamos la correcci√≥n
                             txt_nextion((char*)"t5", (char*)trama_ascii);       // t5.txt="temperatura externa"
                             if (ciclo_max_min ==0){
                                 max_temp_ext =tem_ext;
                                 min_temp_ext =max_temp_ext;
-                                act_hora_max_min(0, 0);                         // mÌnima temperatura externa
-                                act_hora_max_min(1, 0);                         // m·xima temperatura externa
+                                act_hora_max_min(0, 0);                         // m√≠nima temperatura externa
+                                act_hora_max_min(1, 0);                         // m√°xima temperatura externa
                                 ciclo_max_min =1;
                             }
-                            num_nextion((char*)"va0", max_temp_ext, 0);         // va0.val=mÌxima temperatura externa (valores negativos 255 a 128 gestionados por nextion)
+                            num_nextion((char*)"va0", max_temp_ext, 0);         // va0.val=m√≠xima temperatura externa (valores negativos 255 a 128 gestionados por nextion)
                             if (hora_max_ext[5] ==1){
                                 hora_max_ext[5] =0;
-                                txt_nextion((char*)"t11", (char*)hora_max_ext); // si se actualizÛ el valor de m·ximo indicamos la hora
+                                txt_nextion((char*)"t11", (char*)hora_max_ext); // si se actualiz√≥ el valor de m√°ximo indicamos la hora
                             }
-                            num_nextion((char*)"va1", min_temp_ext, 0);         // va1.val=mÌnima temperatura externa (valores negativos 255 a 128 gestionados por nextion)
+                            num_nextion((char*)"va1", min_temp_ext, 0);         // va1.val=m√≠nima temperatura externa (valores negativos 255 a 128 gestionados por nextion)
                             if (hora_min_ext[5] ==1){
                                 hora_min_ext[5] =0;
-                                txt_nextion((char*)"t12", (char*)hora_min_ext); // si se actualizÛ el valor de mÌnimo indicamos la hora
+                                txt_nextion((char*)"t12", (char*)hora_min_ext); // si se actualiz√≥ el valor de m√≠nimo indicamos la hora
                             }
-                            num_nextion((char*)"n0", rad_solar, 0);             // n0.val=radiaciÛn solar
-                            num_nextion((char*)"n3", rad_UV, 0);                // n0.val=radiaciÛn ultravioleta
+                            num_nextion((char*)"n0", rad_solar, 0);             // n0.val=radiaci√≥n solar
+                            num_nextion((char*)"n3", rad_UV, 0);                // n0.val=radiaci√≥n ultravioleta
                             page[5] ='3';                                       // indicamos siguiente pagina
                         break;
                         case 0x03:                                              // pagina 3 temperatura interior
@@ -1019,20 +1021,20 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                             if (ciclo_max_min ==1 && tem_comedor >0){
                                 max_temp_int =tem_comedor;
                                 min_temp_int =max_temp_int;
-                                act_hora_max_min(0, 1);                         // mÌnima temperatura interna
-                                act_hora_max_min(1, 1);                         // m·xima temperatura  interna
-                                ciclo_max_min =2;                               // arrancamos m·ximo/mÌnimo
+                                act_hora_max_min(0, 1);                         // m√≠nima temperatura interna
+                                act_hora_max_min(1, 1);                         // m√°xima temperatura  interna
+                                ciclo_max_min =2;                               // arrancamos m√°ximo/m√≠nimo
                             }
                             if (ciclo_max_min >1){
-                                num_nextion((char*)"n1", max_temp_int, 0);      // n1.val=mÌxima temperatura interna
+                                num_nextion((char*)"n1", max_temp_int, 0);      // n1.val=m√≠xima temperatura interna
                                 if (hora_max_int[5] ==1){
                                     hora_max_int[5] =0;
-                                    txt_nextion((char*)"t11", (char*)hora_max_int);// si se actualizÛ el valor de m·ximo indicamos la hora
+                                    txt_nextion((char*)"t11", (char*)hora_max_int);// si se actualiz√≥ el valor de m√°ximo indicamos la hora
                                 }
-                                num_nextion((char*)"n2", min_temp_int, 0);      // n2.val=m·nima temperatura interna
+                                num_nextion((char*)"n2", min_temp_int, 0);      // n2.val=m√°nima temperatura interna
                                  if (hora_min_int[5] ==1){
                                     hora_min_int[5] =0;
-                                    txt_nextion((char*)"t12", (char*)hora_min_int);// si se actualizÛ el valor de mÌnimo indicamos la hora
+                                    txt_nextion((char*)"t12", (char*)hora_min_int);// si se actualiz√≥ el valor de m√≠nimo indicamos la hora
                                 }
                             }
                             page[5] ='4';                                       // indicamos siguiente pagina
@@ -1040,7 +1042,7 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                         case 0x04:                                              // pagina temperaturas interior
                             num_nextion((char*)"n0", tem_comedor, 0);           // n0.val=temperatura comedor
                             num_nextion((char*)"n1", tem_cocina, 0);            // n1.val=temperatura cocina
-                            num_nextion((char*)"n2", tem_habitacion, 0);        // n2.val=temperatura habitaciÛn
+                            num_nextion((char*)"n2", tem_habitacion, 0);        // n2.val=temperatura habitaci√≥n
                             num_nextion((char*)"n3", tem_pasillo, 0);           // n3.val=temperatura pasillo
                             num_nextion((char*)"n4", tem_aseo, 0);              // n4.val=temperatura aseo
                             num_nextion((char*)"n5", tem_cuartillo, 0);         // n5.val=temperatura cuartillo
@@ -1051,7 +1053,7 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                         case 0x05:                                              // pagina humedad interior
                             num_nextion((char*)"n0", hum_comedor, 0);           // n0.val=humedad comedor
                             num_nextion((char*)"n1", hum_cocina, 0);            // n1.val=humedad cocina
-                            num_nextion((char*)"n2", hum_habitacion, 0);        // n2.val=humedad habitaciÛn
+                            num_nextion((char*)"n2", hum_habitacion, 0);        // n2.val=humedad habitaci√≥n
                             num_nextion((char*)"n3", hum_pasillo, 0);           // n3.val=humedad pasillo
                             num_nextion((char*)"n4", hum_aseo, 0);              // n4.val=humedad aseo
                             num_nextion((char*)"n5", hum_cuartillo, 0);         // n5.val=humedad cuartillo
@@ -1062,7 +1064,7 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                             else
                                 page[5] ='8';
                         break;
-                        case 0x06:                                              // pagina gr·fica temperatura interior/exterior
+                        case 0x06:                                              // pagina gr√°fica temperatura interior/exterior
                             if (posicion >9){
                                 num_nextion((char*)"r0", tx_grafica(6, 0, 0), 0);// temperatura externa canal 0
                                 ClrWdt();
@@ -1070,9 +1072,9 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                             }
                             page[5] ='7';                                       // indicamos siguiente pagina
                         break;
-                        case 0x07:                                              // pagina gr·fica presiÛn atmosfÈrica
+                        case 0x07:                                              // pagina gr√°fica presi√≥n atmosf√©rica
                             if (posicion >9){
-                                num_nextion((char*)"r0", tx_grafica(5, 0, 2), 0);// presiÛn atmosfÈrica
+                                num_nextion((char*)"r0", tx_grafica(5, 0, 2), 0);// presi√≥n atmosf√©rica
                             }
                             page[5] ='8';                                       // indicamos siguiente pagina
                         break;
@@ -1082,7 +1084,7 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                             num_nextion((char*)"n2", int_terraza, 0);           // n2.val=intensidad termo, lavadora
                             num_nextion((char*)"n3", int_luces, 0);             // n3.val=intensidad luces
                             num_nextion((char*)"n4", int_aire, 0);              // n4.val=intensidad aire acondicionado
-                            num_nextion((char*)"n5", tension, 0);               // n5.val=intensidad tensiÛn
+                            num_nextion((char*)"n5", tension, 0);               // n5.val=intensidad tensi√≥n
                             num_nextion((char*)"n6", potencia, 0);              // n6.val=intensidad potencia en W
                             num_nextion((char*)"n7", int_mA, 0);                // n7.val=intensidad total en mA
                             num_nextion((char*)"p0", alar_on_off, 1);           // p0.pic=imagen 22 ok, alarma 35 y >1Kw 36
@@ -1094,31 +1096,31 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
 
                             }
                         break;
-                        case 0x09:                                              // pagina gr·fica consumo
+                        case 0x09:                                              // pagina gr√°fica consumo
                             if (posicion >9){
                                 num_nextion((char*)"r0", tx_grafica(6, 0, 3), 0);// potencia
                             }
                             page[5] ='0';                                       // indicamos siguiente pagina  a la 0
                             ciclo_ini =0;
                         break;
-                        case 0x0A:                                              // pagina configuraciÛn
+                        case 0x0A:                                              // pagina configuraci√≥n
                             page[5] =0;                                         // indicamos NO siguiente pagina
                             auto_page =1;
                             num_nextion((char*)"n0", siguiente_p, 0);           // n0.val=periodo en segundos se siguiente pantalla
                             num_nextion((char*)"n1", reposo, 0);                // n1.val=periodo en minutos de paso a reposo
-                            num_nextion((char*)"n2", alarma_pot, 0);            // n2.val=alarma potencia m·xima
-                            txt_nextion((char*)"t9", (char*)"V.0.0.3");         // info. versiÛn
+                            num_nextion((char*)"n2", alarma_pot, 0);            // n2.val=alarma potencia m√°xima
+                            txt_nextion((char*)"t9", (char*)"V.0.0.3");         // info. versi√≥n
                             num_nextion((char*)"n3", reposo_m, 0);              // info. minuto para reposo
-                            num_nextion((char*)"n4", vcc, 0);                   // info. tensiÛn microprocesador
+                            num_nextion((char*)"n4", vcc, 0);                   // info. tensi√≥n microprocesador
                             act_reloj(1);
                         break;
-                        case 0x0B:                                              // pagina configuraciÛn reloj
+                        case 0x0B:                                              // pagina configuraci√≥n reloj
                             page[5] =0;                                         // indicamos NO siguiente pagina
                             auto_page =1;
                             DS1337_leer_hora_fecha(&dt);
                             num_nextion((char*)"n0", dt.horas, 0);              // n0.val=hora
                             num_nextion((char*)"n1", dt.minutos, 0);            // n0.val=minuto
-                            num_nextion((char*)"n2", dt.dia_mes, 0);            // n0.val=dÌa del mes
+                            num_nextion((char*)"n2", dt.dia_mes, 0);            // n0.val=d√≠a del mes
                             num_nextion((char*)"n3", dt.mes, 0);
                             num_nextion((char*)"n4", dt.anyo, 0);
                             num_nextion((char*)"n5", dt.dia, 0);
@@ -1134,13 +1136,13 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                             page[5] =0;                                         // indicamos NO siguiente pagina
                             auto_page =1;
                             act_reloj(1);
-                            RX_can =0x20;                                       // direcciÛn del nodo de entradas y salidas
+                            RX_can =0x20;                                       // direcci√≥n del nodo de entradas y salidas
                             TX_buffer_CAN[0] =out;                              // valor para el byte a enviar
                             Transmit_CANbus(RX_can, 1);                         // indicamos enviar un byte
                         break;
                     }
                 break;
-                case 0x24:                                                      // trama configuraciÛn
+                case 0x24:                                                      // trama configuraci√≥n
                     eeprom_tx_byte (0x00, RX_buffer[1]);                        // guardamos en eeprom en nuevo valor para siguiente pantalla
                     eeprom_tx_byte (0x01, RX_buffer[2]);                        // guardamos en eeprom en nuevo valor para reposo
                     alarma_pot =RX_buffer[3]*25;                                // obtenemos el valor para la alarma de potencia
@@ -1151,7 +1153,7 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                     OK_sound();
                     cmd_nextion((char*)"page 0");
                 break;
-                case 0x25:                                                      // trama configuraciÛn fecha y hora
+                case 0x25:                                                      // trama configuraci√≥n fecha y hora
                     dt.horas =RX_buffer[1];
                     dt.minutos =RX_buffer[2];
                     dt.segundos =0;
@@ -1188,9 +1190,9 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
             }
             clear_buffer_uart();
         }
-        // gestiÛn modo reposo/trabajo
+        // gesti√≥n modo reposo/trabajo
         if (sleep ==1){                                                         // si nos encontramos en reposo
-            if (Nextion_ON ==0){                                                // y tenemos peticiÛn de pasar a trabajo
+            if (Nextion_ON ==0){                                                // y tenemos petici√≥n de pasar a trabajo
                 cmd_nextion((char*)"sleep=0");                                  // ON nextion
                 reposo_m =update_reposo(reposo);
                 sleep =0;
@@ -1198,20 +1200,20 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                 __delay_ms(150);
                 cmd_nextion((char*)"page 0");
             }
-            if (Clock ==0) reloj_ON();                                          // si tenemos peticiÛn de pantalla de reloj
+            if (Clock ==0) reloj_ON();                                          // si tenemos petici√≥n de pantalla de reloj
             if (Temp_ON ==0){
                 byte_float_string(temperatura[0], temperatura[1], temperatura[2], temperatura[2]);
                 temperaturas(tem_comedor);                                      // si tenemos peticion de pantalla de temperaturas
             }
         }else{                                                                  // si nos encontramos en trabajo
-            if (Nextion_OFF ==0){                                               // y tenemos peticiÛn de pasar a reposo
+            if (Nextion_OFF ==0){                                               // y tenemos petici√≥n de pasar a reposo
                 cmd_nextion((char*)"sleep=1");                                  // en reposo
                 sleep =1;
                 pulsador_on =0;
                 Led_status =0;
             }
         }
-        // gestiÛn pulsador despertar/off alarma
+        // gesti√≥n pulsador despertar/off alarma
         if (Pulsador ==1){
             OK_sound();
             do{
@@ -1220,7 +1222,7 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                     pulsador_on++;
                     if (pulsador_on ==33) OK_sound();                           // si el pulsador se encuentra pulsado unos 5 segundos en trabajo
                 }
-            }while (Pulsador ==1);                                              // esperamos liberaciÛn del pulsador
+            }while (Pulsador ==1);                                              // esperamos liberaci√≥n del pulsador
             if (potencia <1001){
                 if (sleep ==1){
                     cmd_nextion((char*)"sleep=0");                              // ON nextion
@@ -1243,10 +1245,10 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
             if (pulsador_on ==33){
                 reposo_m =update_reposo(reposo+5);                              // incrementamos en 5 minutos el tiempo de reposo
             }else
-                reposo_m =update_reposo(reposo);                                // mantenemos la indicaciÛn de pulsador pulsado hasta reposo_m
+                reposo_m =update_reposo(reposo);                                // mantenemos la indicaci√≥n de pulsador pulsado hasta reposo_m
             pulsador_on =1;
         }
-        // gestiÛn aviso consumo superior a 1Kw y alarma potencia
+        // gesti√≥n aviso consumo superior a 1Kw y alarma potencia
         if (potencia >1000 && pulsador_on ==0){                                 // comprobamos si tenemos un consumo superior a 1Kw
             if (sleep ==1){                                                     // si nos encontramos en reposo despertamos
                 cmd_nextion((char*)"sleep=0");                                  // ON nextion
@@ -1280,9 +1282,9 @@ unsigned short potencia =0, alarma_pot, viento =0, lluvia_h =0, int_mA  =0,
                     if (pulsador_on ==1){                                       // si nos encontramos en reposo, con aviso y pulsado
                         OK_sound();                                             // indicamos y salimos
                     }else{
-                        cmd_nextion((char*)"sleep=1");                          // pasamos a reposo, si nos encontr·bamos en reposo y no pulsamos
+                        cmd_nextion((char*)"sleep=1");                          // pasamos a reposo, si nos encontr√°bamos en reposo y no pulsamos
                     }
-                    sleep =1;                                                   // si nos encontr·bamos en reposo actualizamos estado
+                    sleep =1;                                                   // si nos encontr√°bamos en reposo actualizamos estado
                 }else{
                     cmd_nextion((char*)"page 0");
                 }
